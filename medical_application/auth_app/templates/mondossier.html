@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title>Mon Dossier Médical</title>
+<style>
+    .dossier-wrapper {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #dcecf5;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .dossier-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: black;
+        margin-bottom: 20px;
+    }
+
+    .dossier-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .dossier-info p {
+        font-size: 16px;
+        color: #555;
+        margin: 5px 0;
+    }
+
+    .dossier-info strong {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .btn-back {
+        display: inline-block;
+        background-color: black;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #2e7590;
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<div class="dossier-wrapper">
+    <h2 class="dossier-title">Mon Dossier Médical</h2>
+    <div class="dossier-info">
+        {% if record.error %}
+            <p><strong>Erreur :</strong> {{ record.error }}</p>
+        {% else %}
+            <p><strong>Description :</strong> {{ record.description }}</p>
+            <p><strong>Diagnostic :</strong> {{ record.diagnostic }}</p>
+            <p><strong>Traitement :</strong> {{ record.treatment }}</p>
+            <p><strong>Date de création :</strong> {{ record.created_at }}</p>
+            <p><strong>Dernière mise à jour :</strong> {{ record.updated_at }}</p>
+            <p><strong>Docteur responsable :</strong> {{ record.doctor_nom }} {{ record.doctor_prenom }}</p>
+        {% endif %}
+    </div>
+    <a href="{% url 'profile_view' email=patient.email %}" class="btn-back">Retour au profil</a> <!-- Correct URL reference -->
+</div>
+
+{% endblock %}

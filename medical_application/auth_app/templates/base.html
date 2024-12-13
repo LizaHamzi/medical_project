@@ -1,0 +1,146 @@
+<!-- auth_app/templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Medical Application{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Couleurs de base */
+        body {
+            background-color: #eef8fc;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    
+        /* Navbar */
+        .navbar {
+            background-color: #333;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    
+        .navbar-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+    
+        .navbar .logo:hover {
+            color: #4c9ab9;
+        }
+    
+        .nav-links a {
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            font-size: 1rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+    
+        .nav-links a:hover {
+            color: #4c9ab9;
+        }
+    
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #4c9ab9;
+            transition: width 0.3s ease;
+        }
+    
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+    
+        footer h3 {
+            font-size: 1.2rem;
+        }
+    
+        footer p {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    
+        
+    </head>
+    
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">DMC AI</a>
+            <div class="nav-links">
+                <a href="{% url 'homepage' %}">Home</a>
+                    <a href="{% url 'homepage' %}">About</a>
+                    <a href="{% url 'homepage' %}">Services</a>
+                    <a href="{% url 'homepage' %}">Career</a>
+                    <a href="{% url 'homepage' %}">FAQ</a></li>
+                    <a href="#contact">Contact</a>
+                    <a href="{% url 'login' %}" class="portal-btn">Patient Portal</a>
+                    <a href="#">English</a>
+            </div>
+        </div>
+    </nav>
+    </header>
+
+    <!-- Main content -->
+    <main>
+        {% block content %}
+        <!-- Content from other pages will be included here -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <h3>Contact Us</h3>
+        <p>Email: info@medicalapp.com</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Business Hours: Monday - Friday: 8am - 5pm</p>
+        <p>Saturday: 9am - 1pm</p>
+    </footer>
+    
+</body>
+</html>

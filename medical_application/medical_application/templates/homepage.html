@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Medical Application</title>
+
+    <!-- Inline CSS Styles -->
+    <style>
+        /* Couleurs de base */
+        body {
+            background-color: #eef8fc;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    
+        /* Navbar */
+        .navbar {
+            background-color: #333;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    
+        .navbar-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+    
+        .navbar .logo:hover {
+            color: #4c9ab9;
+        }
+    
+        .nav-links a {
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            font-size: 1rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+    
+        .nav-links a:hover {
+            color: #4c9ab9;
+        }
+    
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #4c9ab9;
+            transition: width 0.3s ease;
+        }
+    
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+    
+        /* Contenu Principal */
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            flex: 1;
+        }
+    
+        .image-container {
+            flex: 1;
+            height: 600px; 
+            margin-right: 2rem;
+        }
+    
+        .image-container img {
+            width: 700px; 
+            height: 565px; 
+            border-radius: 8px;
+        }
+    
+        .welcome-text {
+            flex: 1;
+            text-align: center;
+        }
+    
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+            animation: fadeIn 2s ease-out forwards;
+        }
+    
+        .welcome-text p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+    
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+    
+        .btn {
+            background-color: #333;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+    
+        .btn:hover {
+            background-color: #2e7590;
+            transform: scale(1.05); 
+        }
+    
+        .btn:active {
+            background-color: #222;
+            transform: scale(0.95);
+        }
+    
+        /* Sections */
+        section {
+            padding: 30px 20px; /* Espacement réduit */
+            text-align: center;
+        }
+    
+        section h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    
+        section p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+    
+        section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    
+        section ul li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+    
+        /* Fond pour les sections spécifiques */
+        .services, .faq {
+            background-color: #dcecf5;
+            border-radius: 8px;
+        }
+    
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+    
+        footer h3 {
+            font-size: 1.2rem;
+        }
+    
+        footer p {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    
+        /* Animation de fondu */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Titre principal avec animation de fondu */
+.welcome-text {
+    flex: 1;
+    text-align: center;
+}
+
+.welcome-text h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    opacity: 0; /* Initialement invisible */
+    animation: fadeIn 2s ease-out forwards; /* Animation de fondu en entrée */
+}
+
+.welcome-text p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+    opacity: 0; /* Initialement invisible */
+    animation: fadeIn 2s ease-out forwards;
+    animation-delay: 1s; /* Délai pour que le sous-titre apparaisse après le titre */
+    text-align: center; /* Centre le texte horizontalement */
+    width: 100%;
+}
+    </style>
+    
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">DMC AI</a>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#services">Services</a>
+                    <a href="#career">Career</a>
+                    <a href="#faq">FAQ</a></li>
+                    <a href="#contact">Contact</a>
+                    <a href="{% url 'login' %}" class="portal-btn">Patient Portal</a>
+                    <a href="#">English</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="image-container">
+            <img src="{% static 'images/clinic.jpeg' %}" alt="Medical Office">
+        </div>
+        <div class="welcome-text">
+            <h1>Welcome to Medical AI for Healthcare Professionals</h1>
+            <p>Medical Reports Made Easy with AI Assistance</p>
+            <div class="button-container">
+                <a href="{% url 'login' %}" class="btn">Login</a>
+                <a href="{% url 'register_doctor' %}" class="btn">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h2>About Our Application</h2>
+        <p>A centralized system for healthcare providers to access and manage patient records in real-time, improving diagnosis and care coordination.</p>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <p>We streamline healthcare management for both patients and providers:</p>
+        <ul>
+            <li>Centralized access to medical records via healthcare cards.</li>
+            <li>Real-time access to patient history, prescriptions, and diagnostics.</li>
+            <li>AI-powered tools for symptom checking.</li>
+            <li>Facial and voice authentication for secure login.</li>
+        </ul>
+    </section>
+
+    <!-- Career Section -->
+    <section id="career" class="career">
+        <h2>Career Opportunities</h2>
+        <p>Join our team and help shape the future of healthcare with cutting-edge technology.</p>
+        <ul>
+            <li>Collaborate with experts in AI, healthcare, and data security.</li>
+            <li>Be part of a global platform improving patient outcomes.</li>
+        </ul>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <h2>Frequently Asked Questions</h2>
+        <p>Common questions about our platform:</p>
+        <ul>
+            <li><strong>Is my data secure?</strong> Yes, we use top-tier encryption.</li>
+            <li><strong>Can I update my records?</strong> Only personal details, not medical history.</li>
+            <li><strong>How do I access my records?</strong> Via healthcare card, facial, or voice authentication.</li>
+        </ul>
+    </section>
+
+
+    <footer id="contact">
+        <h3>Contact Us</h3>
+        <p>Email: info@medicalapp.com</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Business Hours: Monday - Friday: 8am - 5pm</p>
+        <p>Saturday: 9am - 1pm</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <!-- Smooth scroll for anchor links -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

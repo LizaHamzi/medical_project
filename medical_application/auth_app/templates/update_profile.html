@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title>Mettre à jour mon profil</title>
+<style>
+    .content-wrapper {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #f5f5dc;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 28px;
+        color: #444;
+        margin-bottom: 25px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    form label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    form input, form select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    form input:focus, form select:focus {
+        border-color: #888;
+        outline: none;
+    }
+
+    form textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+        font-size: 16px;
+        resize: vertical;
+        height: 80px;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn {
+        background-color: #444;
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 6px;
+        border: none;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-size: 16px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: black;
+        transform: scale(1.05);
+        color: #fff;
+    }
+
+    /* Masque les boutons Clear et la mention Currently pour l'image et l'enregistrement vocal */
+    .form-field input[type="checkbox"], .form-field p {
+        display: none;
+    }
+
+</style>
+
+<div class="content-wrapper">
+    <h2>Mettre à jour mon profil</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {% for field in form %}
+                {% if field.name == 'image' %}
+                    <div class="form-field">
+                        <label for="{{ form.image.id_for_label }}">Image:</label>
+                        <input type="file" name="image" id="{{ form.image.id_for_label }}">
+                    </div>
+                {% elif field.name == 'voice_recording' %}
+                    <div class="form-field">
+                        <label for="{{ form.voice_recording.id_for_label }}">Voice recording:</label>
+                        <input type="file" name="voice_recording" id="{{ form.voice_recording.id_for_label }}">
+                    </div>
+                {% else %}
+                    <div class="form-field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="button-group">
+            <button type="submit" class="btn">Mettre à jour</button>
+            <a href="{% url 'profile_view' email=patient.email %}" class="btn">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

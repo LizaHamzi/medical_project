@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<title>Mon Profil</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #eef8fc;
+    }
+    .profile-wrapper {
+        max-width: 1100px;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        display: flex;
+        gap: 20px;
+        background-image: url("{% static 'images/Profile.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        overflow: hidden;
+    }
+    .profile-info-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        border-radius: 8px;
+        justify-content: space-between; 
+    }
+    .profile-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .profile-info p {
+        font-size: 16px;
+        color: #fff;
+        margin: 5px 0;
+    }
+    .profile-info strong {
+        font-weight: bold;
+        color: #fff;
+    }
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 75px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: auto;
+    }
+    .btn {
+        background-color: black;
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+    .btn:hover {
+        background-color: #2e7590;
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .help-link {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+    @media (max-width: 600px) {
+        .profile-wrapper {
+            flex-direction: column;
+            padding: 20px;
+        }
+        .btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+        }
+    }
+</style>
+
+<div class="profile-wrapper">
+    <div class="profile-info-wrapper">
+        <div class="profile-image">
+            {% if patient.image %}
+                <img src="http://localhost:8000/media/{{ patient.image }}" alt="Photo du patient">
+            {% else %}
+                <p>Aucune image disponible</p>
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <p><strong>Nom :</strong> {{ patient.nom }}</p>
+            <p><strong>Prénom :</strong> {{ patient.prenom }}</p>
+            <p><strong>Email :</strong> {{ patient.email }}</p>
+            <p><strong>Numéro RAMQ :</strong> {{ patient.ramq }}</p>
+            <p><strong>Date de naissance :</strong> {{ patient.date_naissance }}</p>
+            <p><strong>Genre :</strong> {{ patient.genre }}</p>
+            <p><strong>Ville de naissance :</strong> {{ patient.ville_naissance }}</p>
+            <p><strong>Adresse :</strong> {{ patient.adresse }}</p>
+            <p><strong>Téléphone :</strong> {{ patient.telephone }}</p>
+        </div>
+       
+        <div class="btn-container">
+            <a href="{% url 'update_patient_profile' patient.id %}" class="btn">Update</a>
+            <a href="{% url 'view_medical_record' patient.id %}" class="btn">My record</a>
+        </div>
+    </div>
+</div>
+<div class="help-link">
+    <div class="help-link">
+        <p>Need assistance? Chat now with our <a href="{% url 'chat' email=patient.email %}">medical bot</a>!</p>
+    </div>
+    
+</div>
+{% endblock %}

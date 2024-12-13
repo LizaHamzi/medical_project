@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Registration{% endblock %}
+
+{% block content %}
+<style>
+    .form-control {
+        background-color: #eef8fc;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+    
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 16px;
+    }
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+    }
+    .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+</style>
+
+</style>
+
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Card contenant l'image et le formulaire côte à côte -->
+            <div class="card" style="background-color: #dcecf5; border: 1px solid #dcecf5; border-radius: 8px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; padding: 20px;">
+
+                <!-- Colonne pour l'image -->
+                <div class="image-container" style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px;">
+                    <img src="{% static 'images/register.jpg' %}" alt="Doctor Registration" class="img-fluid" style="width: 100%; height: 650px; object-fit: cover; border-radius: 8px; max-width: 400px;">
+                </div>
+
+                <!-- Formulaire d'inscription -->
+                <div class="card-body" style="flex: 1.5; padding: 20px; display: flex; flex-direction: column; justify-content: center; max-width: 600px;">
+                    <h2 class="text-center">Doctor Registration</h2>
+
+                    <div class="alert-messages">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+
+                    <!-- Formulaire -->
+                    <form method="POST" enctype="multipart/form-data" style="background-color: #dcecf5; padding: 20px; border-radius: 8px; width: 100%;">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="nom">Nom:</label>
+                            <input type="text" class="form-control" name="nom" id="nom" value="{{ form.nom.value|default:'' }}" required>
+                            {{ form.nom.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prenom">Prenom:</label>
+                            <input type="text" class="form-control" name="prenom" id="prenom" value="{{ form.prenom.value|default:'' }}" required>
+                            {{ form.prenom.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ form.email.value|default:'' }}" required>
+                            {{ form.email.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" name="password" id="password" value="{{ form.password.value|default:'' }}" required>
+                            {{ form.password.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="numero_licence">Doctor Licence Number:</label>
+                            <input type="text" class="form-control" name="numero_licence" id="numero_licence" value="{{ form.numero_licence.value|default:'' }}" required>
+                            {{ form.numero_licence.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="subscription">Choose your subscription:</label>
+                            <select class="form-control" name="subscription" id="subscription">
+                                <option value="basic" {% if form.subscription.value == "basic" %}selected{% endif %}>Basic - $29.99/month</option>
+                                <option value="pro" {% if form.subscription.value == "pro" %}selected{% endif %}>Pro - $69.99/month</option>
+                                <option value="enterprise" {% if form.subscription.value == "enterprise" %}selected{% endif %}>Enterprise - $119.99/month</option>
+                            </select>
+                            {% for error in form.subscription.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Téléchargement de fichier pour l'image -->
+                        <div class="form-group">
+                            <label for="image">Upload Your Image:</label>
+                            <input type="file" class="form-control-file" name="image" id="image">
+                            {{ form.image.errors }}
+                        </div>
+
+                        <!-- Téléchargement de fichier pour l'enregistrement vocal -->
+                        <div class="form-group">
+                            <label for="voice_recording">Upload Your Voice Recording:</label>
+                            <input type="file" class="form-control-file" name="voice_recording" id="voice_recording" required>
+                            {{ form.voice_recording.errors }}
+                        </div>
+                        
+                        
+                        
+
+                        <button type="submit" class="btn btn-dark btn-block">Register</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles personnalisés -->
+<style>
+    .form-control {
+        background-color: #eef8fc;
+        border: 1px solid #ccc;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+
+    .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+    }
+</style>
+{% endblock %}

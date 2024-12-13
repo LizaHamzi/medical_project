@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<title>Chatbot</title>
+<style>
+    /* Structure générale */
+    #main-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Conteneur principal avec historique et chat */
+    #chat-container {
+        display: flex;
+        width: 100%;
+        border-radius: 5px;
+        background-color: #dcecf5;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    #sidebar {
+        width: 300px;
+        padding: 20px;
+        background-color: #dcecf5;
+        border-right: 1px solid #ddd;
+    }
+
+    /* Bouton Nouvelle Conversation */
+    #new-conversation-button {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .btn-new-conversation {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4c86af;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-new-conversation:hover {
+        background-color: #356b8a;
+    }
+
+    /* Historique des conversations */
+    .conversation-list {
+        margin-top: 10px;
+    }
+
+    .conversation-list h3 {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #333;
+        text-align: center;
+    }
+
+    .conversation-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .conversation-list li {
+        margin: 10px 0;
+    }
+
+    .conversation-list a {
+        text-decoration: none;
+        color: #4c86af;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .conversation-list a:hover {
+        text-decoration: underline;
+    }
+
+    /* Zone de chat */
+    #chatbox-container {
+        flex: 1;
+        padding: 20px;
+    }
+
+    #chatbox {
+        width: 100%;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #dcecf5;
+        min-height: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    #chat {
+        max-height: 500px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+
+    #user_input {
+        width: calc(100% - 90px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #4c86af;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #356b8a;
+    }
+
+    /* Styling for messages */
+    .message {
+        margin: 10px 0;
+        padding: 8px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .user-message {
+        background-color: #e0f7fa;
+        justify-content: flex-start;
+    }
+
+    .bot-message {
+        background-color: #e8eaf6;
+        justify-content: flex-start;
+    }
+
+    .icon {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    .message-content {
+        font-size: 16px;
+    }
+
+    h1 {
+        text-align: center;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #333;
+    }
+</style>
+
+<h1>Medical Chat</h1>
+
+<div id="main-container">
+    <!-- Conteneur principal avec historique et chat -->
+    <div id="chat-container">
+        <!-- Sidebar for conversation history -->
+        <div id="sidebar">
+            <div class="conversation-list">
+                <h3>Historique des conversations</h3>
+                <div id="new-conversation-button">
+                    <a href="{% url 'chat' email=patient.email %}?new_conversation=true">Nouvelle conversation</a>
+
+                </div>
+                <ul>
+                    {% for conv in conversations %}
+                        <li>
+                            <a href="{% url 'chat' email=patient.email conversation_id=conv.id %}">
+                                Conversation du {{ conv.created_at|date:"d M Y H:i" }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Zone de chat principale -->
+        <div id="chatbox-container">
+            <div id="chatbox">
+                <div id="chat">
+                    {% for message in chat_history %}
+                        <div class="message {% if message.is_bot %}bot-message{% else %}user-message{% endif %}">
+                            <span class="icon">{% if message.is_bot %}🤖{% else %}👤{% endif %}</span>
+                            <span class="message-content">
+                                <strong>{% if message.is_bot %}Bot:{% else %}You:{% endif %}</strong> {{ message.message }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="text" id="user_input" placeholder="Type your message here">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sendMessage() {
+    const message = document.getElementById('user_input').value; // Récupère le message de l'utilisateur
+    const email = "{{ patient.email }}";  // Récupère l'email du patient depuis le contexte Django
+    const sessionId = "{{ chat_session.id }}"; // Récupère l'ID de la session en cours
+
+    if (!message.trim()) { // Vérifie que le message n'est pas vide
+        alert("Please enter a message."); // Affiche un message d'erreur si vide
+        return; // Arrête l'exécution si le champ est vide
+    }
+
+    // Ajoute immédiatement le message de l'utilisateur à l'interface
+    const chat = document.getElementById('chat');
+    chat.innerHTML += `<div class="message user-message">
+        <span class="icon">👤</span>
+        <span class="message-content">
+            <strong>You:</strong> ${message}
+        </span>
+    </div>`;
+    document.getElementById('user_input').value = ''; // Efface le champ de saisie après l'envoi
+
+    // Envoie une requête POST au serveur pour obtenir la réponse du chatbot
+    fetch(`/auth/chatbot/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // Spécifie que les données sont envoyées en URL-encoded
+            'X-CSRFToken': '{{ csrf_token }}' // Envoie le jeton CSRF pour la sécurité (protection contre les attaques CSRF)
+        },
+        body: new URLSearchParams({message: message, email: email, session_id: sessionId}) // Envoie le message, l'email et l'ID de session
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("HTTP status " + response.status); // Vérifie que la requête a réussi
+        return response.json(); // Convertit la réponse en JSON
+    })
+    .then(data => {
+        if (data.response) { // Si une réponse est reçue du serveur
+            const botMessageContainer = document.createElement('div'); // Crée un nouveau conteneur pour le message du bot
+            botMessageContainer.classList.add('message', 'bot-message'); // Ajoute les classes CSS pour le style
+            botMessageContainer.innerHTML = `
+                <span class="icon">🤖</span>
+                <span class="message-content">
+                    <strong>Bot:</strong> <span id="bot-text"></span>
+                </span>`;
+            chat.appendChild(botMessageContainer); // Ajoute ce conteneur au chat
+
+            const botTextElement = botMessageContainer.querySelector("#bot-text"); // Sélectionne la zone où afficher la réponse
+            displayCharacterByCharacter(data.response, botTextElement); // Affiche la réponse caractère par caractère
+        } else {
+            alert("Sorry, there was an error with the response data."); // Message d'erreur si la réponse est vide ou incorrecte
+        }
+        chat.scrollTop = chat.scrollHeight; // Fait défiler la zone de chat vers le bas pour afficher le dernier message
+    })
+    .catch(error => {
+        console.error("Fetch error:", error); // Affiche l'erreur dans la console
+        alert("There was an issue with the chatbot. Please try again later."); // Alerte l'utilisateur en cas d'échec
+    });
+}
+
+
+    function displayCharacterByCharacter(text, element) {
+        let index = 0;
+        const typingSpeed = 50;
+
+        function typeCharacter() {
+            if (index < text.length) {
+                element.innerHTML += text.charAt(index);// Ajoute un caractère à la fois
+                index++;
+                setTimeout(typeCharacter, typingSpeed);// Attends avant d'ajouter le suivant
+            }
+        }
+
+        typeCharacter();
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vérification Voice ID{% endblock %}
+
+{% block content %}
+<div class="container mt-5 voice-id-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8"> <!-- Box is still wider -->
+            <div class="verification-box p-5 shadow rounded">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-microphone"></i> <!-- Microphone icon -->
+                    Vérification Voice ID
+                </h2>
+                <p class="text-center text-muted mb-4">Capturez votre voix pour la vérification Voice ID</p>
+
+                <!-- Check for error or success messages -->
+                {% if messages %}
+                <div class="text-center">
+                    {% for message in messages %}
+                    <div class="alert alert-info mt-3 mb-4">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% elif error_message %}
+                <div class="text-center">
+                    <div class="alert alert-danger mt-3 mb-4">
+                        {{ error_message }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Buttons to Start and Stop Recording -->
+                <div class="text-center mb-4 d-flex justify-content-center">
+                    <button id="start-record" class="btn simple-btn" title="Commencer l'enregistrement">
+                        <i class="fas fa-microphone"></i> Commencer l'enregistrement
+                    </button>
+                    <button id="stop-record" class="btn simple-btn ms-3" title="Arrêter l'enregistrement" disabled>
+                        <i class="fas fa-stop-circle"></i> Arrêter l'enregistrement
+                    </button>
+                </div>
+
+                <!-- Audio Player for preview with increased width -->
+                <div class="text-center mb-4">
+                    <audio id="audio" controls style="display:none;" class="mx-auto"></audio> <!-- Centered with mx-auto -->
+                </div>
+
+                <!-- Form for submitting the captured audio -->
+                <!-- Form for submitting the captured audio -->
+                <form method="POST" action="{% url 'verify_voice_id' %}" enctype="multipart/form-data" id="capture-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{ email }}"> <!-- Email passé -->
+                    <input type="hidden" name="user_type" value="{{ user_type }}"> <!-- User type passé -->
+
+                    <input type="file" id="voice_audio_input" name="voice_file" style="display:none;">
+                    <!-- Submit button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn submit-btn green-btn" id="submit-btn" disabled>
+                            <i class="fas fa-check-circle"></i> Vérifier Voice ID
+                        </button>
+                    </div>
+                </form>
+                
+
+                
+
+                <!-- Status message -->
+                <p id="status-message" class="text-center mt-3" style="color: red;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- Lien vers Voice ID avec l'email et le user_type -->
+ <div class="text-center mt-3">
+    <p>Ou préférez-vous utiliser <a href="{% url 'face_id_capture' %}?email={{ email }}&user_type={{ user_type }}">la reconnaissance faciale</a> ?</p>
+</div>
+
+<!-- Custom styles for buttons and container -->
+<style>
+    .verification-box {
+        background-color: #eef8fc;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        transition: all 0.3s ease;
+    }
+
+    .simple-btn {
+        background-color: #2e7590;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+    }
+
+    #audio {
+        width: 250px;
+        margin-top: 15px;
+    }
+
+    #status-message {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .ms-3 {
+        margin-left: 15px; /* Margin between start and stop buttons */
+    }
+</style>
+
+<script>
+    var audio = document.getElementById('audio');
+    var startRecordButton = document.getElementById('start-record');
+    var stopRecordButton = document.getElementById('stop-record');
+    var submitButton = document.getElementById('submit-btn');
+    var statusMessage = document.getElementById('status-message');
+    var mediaRecorder;
+    var audioChunks = [];
+
+    // Démarrer l'enregistrement
+    startRecordButton.addEventListener('click', function() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                statusMessage.textContent = "Enregistrement en cours...";
+                stopRecordButton.disabled = false;
+                startRecordButton.disabled = true;
+
+                mediaRecorder.ondataavailable = function(event) {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = function() {
+                    var blob = new Blob(audioChunks, { type: 'audio/wav' });
+                    audioChunks = [];
+
+                    // Création d'un fichier depuis le blob
+                    var fileInput = document.getElementById('voice_audio_input');
+                    var file = new File([blob], "voice_audio.wav", { type: 'audio/wav' });
+                    var dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fileInput.files = dataTransfer.files;
+
+                    // Afficher l'audio pour l'écoute
+                    var audioURL = URL.createObjectURL(blob);
+                    audio.src = audioURL;
+                    audio.style.display = 'block';
+
+                    // Activer le bouton de soumission
+                    submitButton.disabled = false;
+
+                    statusMessage.textContent = "Enregistrement terminé, prêt à être soumis.";
+                    statusMessage.style.color = "green";
+                };
+            })
+            .catch(function(err) {
+                statusMessage.textContent = "Erreur d'accès au microphone : " + err;
+                statusMessage.style.color = "red";
+            });
+    });
+
+    // Arrêter l'enregistrement
+    stopRecordButton.addEventListener('click', function() {
+        mediaRecorder.stop();
+        stopRecordButton.disabled = true;
+        startRecordButton.disabled = false;
+    });
+</script>
+
+{% endblock %}
